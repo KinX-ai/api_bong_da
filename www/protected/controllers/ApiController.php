@@ -1,5 +1,4 @@
 <?php
-
 class ApiController extends Controller
 {
     /**
@@ -28,7 +27,7 @@ class ApiController extends Controller
     {
         return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-                'actions'=>array('video','categories','view'),
+                'actions'=>array('index','video','categories','view','regtoken'),
                 'users'=>array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -36,13 +35,22 @@ class ApiController extends Controller
                 'users'=>array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions'=>array('admin','delete'),
+                'actions'=>array('admin','delete','push'),
                 'users'=>array('admin'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
         );
+    }
+    /**
+     * Render Index
+     */
+    public function actionIndex()
+    {
+        // renders the view file 'protected/views/api/index.php'
+        // using the default layout 'protected/views/layouts/main.php'
+        $this->render('index');
     }
 
 
@@ -102,24 +110,109 @@ class ApiController extends Controller
                     echo CJSON::encode($cat);
                 }
             }else{
-                echo CJSON::encode('Sai app id');
+                print json_encode(array("error"=>"Sai app ID"));
             }
         }else{
-            echo CJSON::encode('Sai ma bao mat');
+            print json_encode(array("error"=>"Sai ma san pham"));
         }
     }
 
     /**
-     * Manages all models.
+     * Luu token va device token
      */
-    public function actionAdmin()
-    {
-        $model=new Categories('search');
-        $model->unsetAttributes();  // clear any default values
-        if(isset($_GET['Categories']))
-            $model->attributes=$_GET['Categories'];
 
-        $this->render('admin',array(
+    public function actionRegToken(){
+
+        //Current Time
+        $time = time();
+
+        if(isset($_POST["device_type"]) && $_POST["token"]){
+            $deviceType = $_POST["device_type"];
+            $token = $_POST["token"];
+
+            $record = Token::model()->find(array(
+                    'select'=>'token',
+                    'condition'=>'token=:token',
+                    'params'=>array(':token'=>$token))
+            );
+            if($record===null){
+                // Luu vao bang
+                $token = new Token;
+
+                $token->create_time = $time;
+                $token->device_type = $deviceType;
+                $token->token = $token;
+                $token->save();
+                print json_encode(array("success"=>"Da them du lieu thanh cong"));
+
+            }else{
+                print json_encode(array("error"=>"Da ton tai RegID"));
+            }
+        }else{
+            print json_encode(array("error"=>"Thieu du lieu"));
+        }
+
+    }
+
+    /**
+     * Push
+     */
+    public function actionPush()
+    {
+        $model=new Token('search');
+        $model->unsetAttributes();  // clear any default values
+
+        $md5 = "372d74ec3935e9418b5b7187cd471f65";
+        $registatoin_ids = array();
+
+        // Adjust to your timezone
+        date_default_timezone_set('Asia/Bangkok');
+
+        // No time limit
+//        set_time_limit(0);
+
+        // Report all PHP errors
+        error_reporting(-1);
+
+
+        $deviceType = 2;
+//        $deviceType = $_POST["device_type"];
+
+        // Lấy Nội dung tin nhắn
+        if(isset($_POST["message"]))
+        {
+            $message = $_POST["message"];
+            $record = Token::model()->findAll(array(
+                    'select'=>'token',
+                    'condition'=>'device_type=:device_type',
+                    'params'=>array(':device_type'=>$deviceType))
+            );
+
+            if($record===null){
+                echo json_encode('Khong co thiet bi');
+            }else{
+
+
+                foreach($record as $row){
+                    $registatoin_ids[] = $row->token;
+                }
+
+                print json_encode($registatoin_ids);
+
+//            Yii::import('system.vendors.*');
+//            require_once('GCM/GCM.php');
+//            $gcm = new GCM;
+//            $message = array("msg" => $message,"url"=>$url);
+//            $result = $gcm->send_notification($registatoin_ids, $message);
+//            echo $result;
+
+            }
+
+        }else{
+            //Cha lam gi
+        }
+
+        $this->render('push',array(
             'model'=>$model,
         ));
     }

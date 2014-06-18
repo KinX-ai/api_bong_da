@@ -145,7 +145,13 @@ class VideoController extends Controller
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
+	 * If thepublic function getCategoryOptions()
+    {
+    return array(
+    array('id'=>256,'text'=>'TV','group'=>'Electrical'),
+    array('id'=>257,'text'=>'Radio','group'=>'Electrical'),
+    );
+    } data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
 	 * @return Video the loaded model
 	 * @throws CHttpException

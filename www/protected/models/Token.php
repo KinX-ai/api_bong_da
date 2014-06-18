@@ -1,28 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "Video".
+ * This is the model class for table "token".
  *
- * The followings are the available columns in table 'Video':
+ * The followings are the available columns in table 'token':
  * @property string $id
- * @property string $cate
- * @property string $name
- * @property string $sapo
- * @property string $youtube_key
- * @property string $link
- * @property string $thumb
- *
- * The followings are the available model relations:
- * @property Categories $cate0
+ * @property string $token
+ * @property integer $create_time
+ * @property integer $device_type
  */
-class Video extends CActiveRecord
+class Token extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'video';
+		return 'token';
 	}
 
 	/**
@@ -33,12 +27,12 @@ class Video extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cate', 'required'),
-			array('cate', 'length', 'max'=>11),
-			array('name, sapo, youtube_key, link, thumb', 'length', 'max'=>255),
+			array('create_time', 'required'),
+			array('create_time, device_type', 'numerical', 'integerOnly'=>true),
+			array('token', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, cate, name, sapo, youtube_key, link, thumb', 'safe', 'on'=>'search'),
+			array('id, token, create_time, device_type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,7 +44,6 @@ class Video extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'cate0' => array(self::BELONGS_TO, 'Categories', 'cate'),
 		);
 	}
 
@@ -61,12 +54,9 @@ class Video extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'cate' => 'Cate',
-			'name' => 'Name',
-			'sapo' => 'Sapo',
-			'youtube_key' => 'Youtube Key',
-			'link' => 'Link',
-			'thumb' => 'Thumb',
+			'token' => 'Token',
+			'create_time' => 'Create Time',
+			'device_type' => 'Device Type',
 		);
 	}
 
@@ -89,12 +79,9 @@ class Video extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('cate',$this->cate,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('sapo',$this->sapo,true);
-		$criteria->compare('youtube_key',$this->youtube_key,true);
-		$criteria->compare('link',$this->link,true);
-		$criteria->compare('thumb',$this->thumb,true);
+		$criteria->compare('token',$this->token,true);
+		$criteria->compare('create_time',$this->create_time);
+		$criteria->compare('device_type',$this->device_type);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -105,25 +92,10 @@ class Video extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Video the static model class
+	 * @return Token the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
-    public function getCategoryOptions()
-    {
-        $categries = array();
-        $criteria = new CDbCriteria();
-        $cats = Categories::model()->findAll($criteria);
-        foreach($cats as $i=>$cat) {
-            $categries[] = array(
-                'id'=> $cat["id"],
-                'text' => $cat["name"]
-            );
-        }
-
-        return $categries;
-    }
 }

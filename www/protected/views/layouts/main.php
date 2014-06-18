@@ -29,10 +29,11 @@
 	<div id="mainmenu">
 		<?php $this->widget('zii.widgets.CMenu',array(
 			'items'=>array(
-				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
-				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Categories', 'url'=>array('/categories/index')),
+				array('label'=>'Đăng nhập', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
+				array('label'=>'Đăng xuất ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Danh mục', 'url'=>array('/categories/index')),
 				array('label'=>'Video', 'url'=>array('/video/index')),
+				array('label'=>'Bắn Push', 'url'=>array('/api/push')),
 			),
 		)); ?>
 	</div><!-- mainmenu -->

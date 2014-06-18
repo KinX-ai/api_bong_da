@@ -20,9 +20,12 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'cate'); ?>
-		<?php echo $form->textField($model,'cate',array('size'=>11,'maxlength'=>11)); ?>
-		<?php echo $form->error($model,'cate'); ?>
+        <?php $data = CHtml::listData($model->getCategoryOptions(),'id','text'); ?>
+        <?php echo CHtml::activeDropDownList($model,'cate',$data); ?>
+
+<!--		--><?php //echo $form->labelEx($model,'cate'); ?>
+<!--		--><?php //echo $form->textField($model,'cate',array('size'=>11,'maxlength'=>11)); ?>
+<!--		--><?php //echo $form->error($model,'cate'); ?>
 	</div>
 
 	<div class="row">
